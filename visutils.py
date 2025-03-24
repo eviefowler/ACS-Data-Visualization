@@ -69,6 +69,44 @@ def groupedBar(df, category, grouper, value, function = 'mean'
     ax.legend()
     plt.show()
     
+def stackedBar(df, category, grouper, value, function = 'count'
+               , xlab = None, ylab = None, yl = None, sortvalues = False, scale = False
+               , **kwargs):
+    grpd = df.groupby([grouper, category])[[value]].agg(function)
+    
+    if scale:
+        grpd = pd.merge(grpd.reset_index()
+                        , grpd.reset_index().groupby(category)[[value]].sum().rename(columns = {value: 'Category Level'})
+                        , how = 'outer', on = category
+                       )
+        grpd[value] = grpd[value] / grpd['Category Level']
+        grpd = grpd.drop(columns = ['Category Level']).sort_values([grouper, category]).set_index([grouper_category])
+        
+    if sortvalues:
+        grpd = grpd.sort_values(by = value)
+        tgtIndex = grpd.loc[cats[0]].index
+        grpd = pd.concat([(grpd
+                            .loc[cat]
+                            .loc[tgtIndex]
+                            .assign(temp = cat)
+                            .rename(columns = {'temp': grouper})
+                            .reset_index()
+                            .set_index([grouper, category])) for cat in cats])
+
+    fig, ax = plt.subplots()
+    bottom = [0 for lvl in grpd.index.levels[1]]
+    for grpr in grpd.index.levels[0]:
+        ht = grpd.loc[grpr, 'Count']
+        p = ax.bar(ht.index, ht, 0.9, label = grpr, bottom = bottom)
+        bottom += ht
+        
+    ax.set_xlabel(xlab if xlab else category)
+    ax.set_ylabel(ylab if ylab else value)
+    if yl:
+        ax.set_ylim(yl)
+    ax.legend()
+    plt.show()
+    
 def createStateMap(stl, colorFeature, zoom = [-170, -50, 15, 75], colormap = 'PiYG'):
     # create a scaled color feature
     stl['Scaled'] = (stl[colorFeature] - stl[colorFeature].min()) / (stl[colorFeature].max() - stl[colorFeature].min())
