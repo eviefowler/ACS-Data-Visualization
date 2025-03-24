@@ -80,7 +80,7 @@ def stackedBar(df, category, grouper, value, function = 'count'
                         , how = 'outer', on = category
                        )
         grpd[value] = grpd[value] / grpd['Category Level']
-        grpd = grpd.drop(columns = ['Category Level']).sort_values([grouper, category]).set_index([grouper_category])
+        grpd = grpd.drop(columns = ['Category Level']).sort_values([grouper, category]).set_index([grouper, category])
         
     if sortvalues:
         grpd = grpd.sort_values(by = value)
@@ -96,7 +96,7 @@ def stackedBar(df, category, grouper, value, function = 'count'
     fig, ax = plt.subplots()
     bottom = [0 for lvl in grpd.index.levels[1]]
     for grpr in grpd.index.levels[0]:
-        ht = grpd.loc[grpr, 'Count']
+        ht = grpd.loc[grpr, value]
         p = ax.bar(ht.index, ht, 0.9, label = grpr, bottom = bottom)
         bottom += ht
         
