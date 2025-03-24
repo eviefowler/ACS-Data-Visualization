@@ -93,7 +93,7 @@ def stackedBar(df, category, grouper, value, function = 'count'
                             .reset_index()
                             .set_index([grouper, category])) for cat in cats])
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(**kwargs)
     bottom = [0 for lvl in grpd.index.levels[1]]
     for grpr in grpd.index.levels[0]:
         ht = grpd.loc[grpr, value]
