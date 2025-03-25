@@ -104,8 +104,7 @@ def stackedBar(df, category, grouper, value, function = 'count'
     ax.set_ylabel(ylab if ylab else value)
     if yl:
         ax.set_ylim(yl)
-#     ax.legend()
-    plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    plt.legend(loc = 'center left', bbox_to_anchor = (1, 0.5))
     plt.show()
     
 def createStateMap(stl, colorFeature, zoom = [-170, -50, 15, 75], colormap = 'PiYG'):
